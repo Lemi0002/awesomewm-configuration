@@ -126,7 +126,8 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock(' \u{f00ed} %a %d.%m.%y  \u{f0954} %R ')
-local mybattery = battery:new()
+local my_battery = battery.initialize()
+local my_battery_1 = battery.initialize({ prefix = { plugged = 'Hello:' } })
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -262,8 +263,12 @@ awful.screen.connect_for_each_screen(function(s)
                 shape = gears.shape.rounded_rect,
                 widget = wibox.container.background
             },
-                -- battery:new(),
-            mybattery,
+            {
+                widget = my_battery_1.widget,
+            },
+            {
+                widget = my_battery.widget,
+            },
             s.mylayoutbox,
         },
     }
@@ -302,7 +307,7 @@ globalkeys = gears.table.join(
         { description = 'focus previous by index', group = 'client' }
     ),
     -- awful.key({ modkey, }, 'w', function() mymainmenu:show() end,
-        -- { description = 'show main menu', group = 'awesome' }),
+    -- { description = 'show main menu', group = 'awesome' }),
 
     -- Layout manipulation
     awful.key({ modkey, 'Shift' }, 'j', function() awful.client.swap.byidx(1) end,

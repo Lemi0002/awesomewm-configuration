@@ -27,7 +27,7 @@ local DEFAULTS = {
     },
 }
 
-local function read_file(file)
+local read_file = function(file)
     local file = io.open(file)
 
     if not file then
@@ -39,7 +39,7 @@ local function read_file(file)
     return text
 end
 
-local function trim(s)
+local trim = function(s)
     if not s then
         return nil
     end
@@ -47,16 +47,16 @@ local function trim(s)
     return (s:gsub('^%s*(.-)%s*$', '%1'))
 end
 
-local function read_trim(file_name)
+local read_trim = function(file_name)
     return trim(read_file(file_name)) or ''
 end
 
-function battery:new(arguments)
+battery.initialize = function(arguments)
     if arguments == nil then
         arguments = {}
     end
 
-    self = setmetatable({}, {__index = self})
+    local self = {}
     self.adapter = arguments.adapter or DEFAULTS.adapter
     self.timeout = arguments.timeout or DEFAULTS.timeout
 
@@ -89,20 +89,15 @@ function battery:new(arguments)
         capacity = PATH_POWER_SUPPLY .. self.adapter .. '/capacity',
         status = PATH_POWER_SUPPLY .. self.adapter .. '/status',
     }
+    self.widget = wibox.widget.textbox()
     self.timer = gears.timer({ timeout = self.timeout })
-    self.timer:connect_signal('timeout', function() self:update() end)
+    self.timer:connect_signal('timeout', function() battery.update(self) end)
     self.timer:start()
-    self.widget = {
-        -- layout = wibox.layout.fixed.horizontal,
-        widget = wibox.widget.textbox,
-    }
-
-    self:update()
-    -- return self
-    return self.widget
+    battery.update(self)
+    return self
 end
 
-function battery:update()
+battery.update = function(self)
     if gears.filesystem.dir_readable(self.path.battery) == false
         or gears.filesystem.file_readable(self.path.capacity) == false
         or gears.filesystem.file_readable(self.path.status) == false then
@@ -111,12 +106,6 @@ function battery:update()
 
     local capacity = tonumber(read_trim(self.path.capacity))
     self.widget.text = self.prefix.plugged .. ' ' .. capacity
-
-    -- naughty.notify({
-    --     preset = naughty.config.presets.critical,
-    --     title = 'Oops, there were errors during startup!',
-    --     text = 'Callback'
-    -- })
 end
 
 return battery
