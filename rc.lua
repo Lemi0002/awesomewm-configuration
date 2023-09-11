@@ -22,6 +22,8 @@ require('awful.hotkeys_popup.keys')
 -- External widgets
 local battery_widget = require("battery-widget")
 
+local battery = require('widgets.battery')
+
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -124,6 +126,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock(' \u{f00ed} %a %d.%m.%y  \u{f0954} %R ')
+local mybattery = battery:new()
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -234,6 +237,7 @@ awful.screen.connect_for_each_screen(function(s)
             spacing = 20,
             wibox.widget.systray(),
             battery_widget {},
+            -- battery_widget.
             {
                 {
                     -- align = 'center',
@@ -258,6 +262,8 @@ awful.screen.connect_for_each_screen(function(s)
                 shape = gears.shape.rounded_rect,
                 widget = wibox.container.background
             },
+                -- battery:new(),
+            mybattery,
             s.mylayoutbox,
         },
     }
@@ -295,8 +301,8 @@ globalkeys = gears.table.join(
         end,
         { description = 'focus previous by index', group = 'client' }
     ),
-    awful.key({ modkey, }, 'w', function() mymainmenu:show() end,
-        { description = 'show main menu', group = 'awesome' }),
+    -- awful.key({ modkey, }, 'w', function() mymainmenu:show() end,
+        -- { description = 'show main menu', group = 'awesome' }),
 
     -- Layout manipulation
     awful.key({ modkey, 'Shift' }, 'j', function() awful.client.swap.byidx(1) end,
