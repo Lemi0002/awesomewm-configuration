@@ -127,7 +127,6 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock(' \u{f00ed} %a %d.%m.%y  \u{f0954} %R ')
 local my_battery = battery.initialize()
-local my_battery_1 = battery.initialize({ prefix = { plugged = 'Hello:' } })
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -264,10 +263,15 @@ awful.screen.connect_for_each_screen(function(s)
                 widget = wibox.container.background
             },
             {
-                widget = my_battery_1.widget,
-            },
-            {
-                widget = my_battery.widget,
+                {
+                    widget = my_battery.widget,
+                },
+                shape_border_width = 3,
+                shape_border_color = '#FF1694',
+                bg = '#555555',
+                fg = '#eeeeee',
+                shape = gears.shape.rounded_rect,
+                widget = wibox.container.background
             },
             s.mylayoutbox,
         },

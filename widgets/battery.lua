@@ -1,15 +1,18 @@
-local awful = require('awful')
 local gears = require('gears')
 local wibox = require('wibox')
-local naughty = require('naughty')
 
 local battery = {}
-local PATH_POWER_SUPPLY = '/sys/class/power_supply/'
 
+local PATH_POWER_SUPPLY = '/sys/class/power_supply/'
 local DEFAULTS = {
     adapter = 'BAT0',
-    timeout = 20,
-    prefix = {
+    timeout = 10,
+    character = {
+        leading = ' ',
+        delimiter = ' ',
+        trailing = '% ',
+    },
+    indicator = {
         plugged = '\u{f0084}',
         unavailable = '\u{f0091}',
         unplugged = {
@@ -27,28 +30,16 @@ local DEFAULTS = {
     },
 }
 
-local read_file = function(file)
-    local file = io.open(file)
+local read_line = function(file_name)
+    local file = io.open(file_name)
 
     if not file then
         return nil
     end
 
-    local text = file:read('*all')
+    local text = file:read('*line')
     file:close()
     return text
-end
-
-local trim = function(s)
-    if not s then
-        return nil
-    end
-
-    return (s:gsub('^%s*(.-)%s*$', '%1'))
-end
-
-local read_trim = function(file_name)
-    return trim(read_file(file_name)) or ''
 end
 
 battery.initialize = function(arguments)
@@ -60,32 +51,41 @@ battery.initialize = function(arguments)
     self.adapter = arguments.adapter or DEFAULTS.adapter
     self.timeout = arguments.timeout or DEFAULTS.timeout
 
-    if arguments.prefix == nil then
-        arguments.prefix = {}
+    if arguments.character == nil then
+        arguments.character = {}
     end
 
-    if arguments.prefix.unplugged == nil then
-        arguments.prefix.unplugged = {}
+    self.character = {
+        leading = arguments.character.leading or DEFAULTS.character.leading,
+        delimiter = arguments.character.delimiter or DEFAULTS.character.delimiter,
+        trailing = arguments.character.trailing or DEFAULTS.character.trailing,
+    }
+
+    if arguments.indicator == nil then
+        arguments.indicator = {}
     end
 
-    self.prefix = {
-        plugged = arguments.prefix.plugged or DEFAULTS.prefix.plugged,
-        unavailable = arguments.prefix.unavailable or DEFAULTS.prefix.unavailable,
+    if arguments.indicator.unplugged == nil then
+        arguments.indicator.unplugged = {}
+    end
+
+    self.indicator = {
+        plugged = arguments.indicator.plugged or DEFAULTS.indicator.plugged,
+        unavailable = arguments.indicator.unavailable or DEFAULTS.indicator.unavailable,
         unplugged = {
-            ['10'] = arguments.prefix.unplugged['10'] or DEFAULTS.prefix.unplugged['10'],
-            ['20'] = arguments.prefix.unplugged['20'] or DEFAULTS.prefix.unplugged['20'],
-            ['30'] = arguments.prefix.unplugged['30'] or DEFAULTS.prefix.unplugged['30'],
-            ['40'] = arguments.prefix.unplugged['40'] or DEFAULTS.prefix.unplugged['40'],
-            ['50'] = arguments.prefix.unplugged['50'] or DEFAULTS.prefix.unplugged['50'],
-            ['60'] = arguments.prefix.unplugged['60'] or DEFAULTS.prefix.unplugged['60'],
-            ['70'] = arguments.prefix.unplugged['70'] or DEFAULTS.prefix.unplugged['70'],
-            ['80'] = arguments.prefix.unplugged['80'] or DEFAULTS.prefix.unplugged['80'],
-            ['90'] = arguments.prefix.unplugged['90'] or DEFAULTS.prefix.unplugged['90'],
-            ['100'] = arguments.prefix.unplugged['100'] or DEFAULTS.prefix.unplugged['100'],
+            ['10'] = arguments.indicator.unplugged['10'] or DEFAULTS.indicator.unplugged['10'],
+            ['20'] = arguments.indicator.unplugged['20'] or DEFAULTS.indicator.unplugged['20'],
+            ['30'] = arguments.indicator.unplugged['30'] or DEFAULTS.indicator.unplugged['30'],
+            ['40'] = arguments.indicator.unplugged['40'] or DEFAULTS.indicator.unplugged['40'],
+            ['50'] = arguments.indicator.unplugged['50'] or DEFAULTS.indicator.unplugged['50'],
+            ['60'] = arguments.indicator.unplugged['60'] or DEFAULTS.indicator.unplugged['60'],
+            ['70'] = arguments.indicator.unplugged['70'] or DEFAULTS.indicator.unplugged['70'],
+            ['80'] = arguments.indicator.unplugged['80'] or DEFAULTS.indicator.unplugged['80'],
+            ['90'] = arguments.indicator.unplugged['90'] or DEFAULTS.indicator.unplugged['90'],
+            ['100'] = arguments.indicator.unplugged['100'] or DEFAULTS.indicator.unplugged['100'],
         },
     }
-    self.path = {
-        battery = PATH_POWER_SUPPLY .. self.adapter,
+    self.file = {
         capacity = PATH_POWER_SUPPLY .. self.adapter .. '/capacity',
         status = PATH_POWER_SUPPLY .. self.adapter .. '/status',
     }
@@ -98,14 +98,25 @@ battery.initialize = function(arguments)
 end
 
 battery.update = function(self)
-    if gears.filesystem.dir_readable(self.path.battery) == false
-        or gears.filesystem.file_readable(self.path.capacity) == false
-        or gears.filesystem.file_readable(self.path.status) == false then
-        return
+    local capacity = tonumber(read_line(self.file.capacity) or '0') or 0
+    local status = string.lower(read_line(self.file.status) or '')
+    local indicator = ''
+
+    if status == 'discharging' then
+        local index = (math.floor((capacity - 1) / 10) + 1) * 10
+        indicator = self.indicator.unplugged[tostring(index)]
+    elseif status == 'charging' then
+        indicator = self.indicator.plugged
+    else
+        indicator = self.indicator.unavailable
     end
 
-    local capacity = tonumber(read_trim(self.path.capacity))
-    self.widget.text = self.prefix.plugged .. ' ' .. capacity
+    self.widget.text =
+        self.character.leading ..
+        indicator ..
+        self.character.delimiter ..
+        capacity ..
+        self.character.trailing
 end
 
 return battery
