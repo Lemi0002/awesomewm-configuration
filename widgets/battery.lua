@@ -8,9 +8,9 @@ local DEFAULTS = {
     adapter = 'BAT0',
     timeout = 10,
     character = {
-        leading = ' ',
+        leading = '',
         delimiter = ' ',
-        trailing = '% ',
+        trailing = '%',
     },
     indicator = {
         plugged = '\u{f0084}',

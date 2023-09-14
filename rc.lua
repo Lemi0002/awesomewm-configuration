@@ -19,9 +19,6 @@ local hotkeys_popup = require('awful.hotkeys_popup')
 require('awful.hotkeys_popup.keys')
 
 
--- External widgets
-local battery_widget = require("battery-widget")
-
 local battery = require('widgets.battery')
 
 
@@ -125,7 +122,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock(' \u{f00ed} %a %d.%m.%y  \u{f0954} %R ')
+mytextclock = wibox.widget.textclock('\u{f00ed} %a %d.%m.%y  \u{f0954} %R')
 local my_battery = battery.initialize()
 
 -- Create a wibox for each screen and add it
@@ -180,17 +177,49 @@ awful.screen.connect_for_each_screen(function(s)
         awful.button({}, 5, function() awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
-        screen  = s,
-        filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        screen          = s,
+        filter          = awful.widget.taglist.filter.all,
+        buttons         = taglist_buttons,
+
+        style           = {
+            bg_empty = beautiful.color.bg[2],
+            bg_occupied = beautiful.color.bg[3],
+            bg_focus = beautiful.bg_focus,
+            bg_urgent = beautiful.bg_urgent,
+            bg_volatile = beautiful.bg_urgent,
+            shape = gears.shape.rounded_rect,
+            -- shape_border_width = 3,
+            -- shape_border_color = '#FF1694',
+            -- shape_border_color_focus = '#ffffff',
+        },
+
+        layout          = {
+            spacing = 12,
+            layout = wibox.layout.fixed.horizontal,
+        },
+
+        widget_template = {
+            {
+                {
+                    id     = "text_role",
+                    widget = wibox.widget.textbox,
+                },
+                left   = beautiful.margin_horizontal,
+                right  = beautiful.margin_horizontal,
+                widget = wibox.container.margin,
+                -- color = '#00ee00'
+            },
+            id     = "background_role",
+            widget = wibox.container.background,
+        },
     }
 
     -- Create the wibox
     s.mywibox = awful.wibar({
         position = 'top',
         screen = s,
-        border_width = 10,
-        border_color = '#009900',
+        border_width = beautiful.border_width,
+        border_color = beautiful.bg_normal,
     })
 
     -- Add widgets to the wibox
@@ -205,7 +234,7 @@ awful.screen.connect_for_each_screen(function(s)
         {
             -- {
             --     {
-            --         align  = "center",
+            --         align  = 'center',
             --         -- widget = mytextclock,
             --         text = '',
             --         widget = wibox.widget.textbox
@@ -216,15 +245,15 @@ awful.screen.connect_for_each_screen(function(s)
             --     widget = wibox.container.background
             -- },
             { -- Title
-                {
-                    align  = "center",
-                    widget = mytextclock,
-                    -- text = 'Hello',
-                    -- widget = wibox.widget.textbox
-                },
+                -- {
+                --     align  = 'center',
+                --     widget = mytextclock,
+                --     -- text = 'Hello',
+                --     -- widget = wibox.widget.textbox
+                -- },
 
-                bg = '#555555',
-                fg = '#eeeeee',
+                -- bg = '#555555',
+                -- fg = '#eeeeee',
                 -- shape = gears.shape.powerline,
                 widget = wibox.container.background
             },
@@ -236,40 +265,52 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             spacing = 20,
             wibox.widget.systray(),
-            battery_widget {},
-            -- battery_widget.
             {
                 {
-                    -- align = 'center',
-                    widget = mykeyboardlayout,
+                    {
+                        -- align = 'center',
+                        widget = my_battery.widget,
+                    },
+                    -- margins = 12,
+                    left   = beautiful.margin_horizontal,
+                    right  = beautiful.margin_horizontal,
+                    widget = wibox.container.margin,
                 },
-                bg = '#555555',
-                fg = '#eeeeee',
-                shape_border_width = 3,
-                shape_border_color = '#FF1694',
+                -- shape_border_width = 3,
+                -- shape_border_color = '#FF1694',
+                bg = beautiful.color.bg[3],
+                -- fg = '#eeeeee',
                 shape = gears.shape.rounded_rect,
                 widget = wibox.container.background
             },
+            -- {
+            --     {
+            --         -- align = 'center',
+            --         widget = mykeyboardlayout,
+            --     },
+            --     -- margins = 12,
+            --     bg = beautiful.color.bg[3],
+            --     -- fg = '#eeeeee',
+            --     -- shape_border_width = 3,
+            --     -- shape_border_color = '#FF1694',
+            --     shape = gears.shape.rounded_rect,
+            --     widget = wibox.container.background
+            -- },
             {
                 {
-                    -- align = 'center',
-                    widget = mytextclock,
+                    {
+                        -- align = 'center',
+                        widget = mytextclock,
+                    },
+                    -- margins = 12,
+                    left   = beautiful.margin_horizontal,
+                    right  = beautiful.margin_horizontal,
+                    widget = wibox.container.margin,
                 },
-                shape_border_width = 3,
-                shape_border_color = '#FF1694',
-                bg = '#555555',
-                fg = '#eeeeee',
-                shape = gears.shape.rounded_rect,
-                widget = wibox.container.background
-            },
-            {
-                {
-                    widget = my_battery.widget,
-                },
-                shape_border_width = 3,
-                shape_border_color = '#FF1694',
-                bg = '#555555',
-                fg = '#eeeeee',
+                -- shape_border_width = 3,
+                -- shape_border_color = '#FF1694',
+                bg = beautiful.color.bg[3],
+                -- fg = '#eeeeee',
                 shape = gears.shape.rounded_rect,
                 widget = wibox.container.background
             },
@@ -432,32 +473,93 @@ clientkeys = gears.table.join(
         { description = '(un)maximize horizontally', group = 'client' }),
 
     -- Volume Keys
-    awful.key({}, "XF86AudioLowerVolume",
+    awful.key({}, 'XF86AudioLowerVolume',
         function()
-            awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%", false)
+            awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ -5%', false)
         end,
         { description = 'decrease volume', group = 'general' }),
-    awful.key({}, "XF86AudioRaiseVolume",
+    awful.key({}, 'XF86AudioRaiseVolume',
         function()
-            awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%", false)
+            awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ +5%', false)
         end,
         { description = 'increase volume', group = 'general' }),
-    awful.key({}, "XF86AudioMute",
+    awful.key({}, 'XF86AudioMute',
         function()
-            awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle", false)
+            awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
         end,
-        { description = 'mute volume', group = 'general' })
+        { description = 'mute volume', group = 'general' }),
 
--- Media Keys
--- awful.key({}, "XF86AudioPlay", function()
---     awful.util.spawn("playerctl play-pause", false)
--- end),
--- awful.key({}, "XF86AudioNext", function()
---     awful.util.spawn("playerctl next", false)
--- end),
--- awful.key({}, "XF86AudioPrev", function()
---     awful.util.spawn("playerctl previous", false)
--- end),
+    -- Media Keys
+    -- awful.key({}, 'XF86AudioPlay', function()
+    --     awful.util.spawn('playerctl play-pause', false)
+    -- end),
+    -- awful.key({}, 'XF86AudioNext', function()
+    --     awful.util.spawn('playerctl next', false)
+    -- end),
+    -- awful.key({}, 'XF86AudioPrev', function()
+    --     awful.util.spawn('playerctl previous', false)
+    -- end),
+
+
+    -- Resize operations
+    awful.key({ modkey, 'Control' }, 'Left', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, 0, -40, 0)
+        end
+    end, { description = 'resize smaller horizontally', group = 'floating client' }),
+    awful.key({ modkey, 'Control' }, 'Right', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, 0, 40, 0)
+        end
+    end, { description = 'resize larger horizontally', group = 'floating client' }),
+    awful.key({ modkey, 'Control' }, 'Up', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, 0, 0, -40)
+        end
+    end, { description = 'resize smaller vertically', group = 'floating client' }),
+    awful.key({ modkey, 'Control' }, 'Down', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, 0, 0, 40)
+        end
+    end, { description = 'resize larger vertically', group = 'floating client' }),
+
+    -- Move operations
+    awful.key({ modkey, 'Shift' }, 'Left', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(-40, 0, 0, 0)
+        end
+    end, { description = 'move client left', group = 'floating client' }),
+    awful.key({ modkey, 'Shift' }, 'Right', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(40, 0, 0, 0)
+        end
+    end, { description = 'move client right', group = 'floating client' }),
+    awful.key({ modkey, 'Shift' }, 'Up', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, -40, 0, 0)
+        end
+    end, { description = 'move client up', group = 'floating client' }),
+    awful.key({ modkey, 'Shift' }, 'Down', function()
+        local c = client.focus
+        if c.floating or c.first_tag and c.first_tag.layout.name == 'floating' then
+            c.maximized = false
+            c:relative_move(0, 40, 0, 0)
+        end
+    end, { description = 'move client down', group = 'floating client' })
 )
 
 -- Bind all key numbers to tags.
@@ -535,7 +637,7 @@ awful.rules.rules = {
     {
         rule = {},
         properties = {
-            border_width = 5,
+            border_width = beautiful.border_width,
             border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
             raise = true,
@@ -590,9 +692,6 @@ awful.rules.rules = {
                 'dialog',
             },
         },
-        properties = {
-            titlebars_enabled = true
-        }
     },
 
     {
@@ -634,79 +733,79 @@ client.connect_signal('manage', function(c)
 end)
 
 
-local function set_titlebar(client, flag)
-    if flag then
-        if client.titlebar == nil then
-            client:emit_signal('request::titlebars', 'rules', {})
-        end
-        awful.titlebar.show(client)
-    else
-        awful.titlebar.hide(client)
-    end
-end
-
-client.connect_signal('property::floating', function(c)
-    set_titlebar(c, c.floating)
-end)
-
-client.connect_signal('manage', function(c)
-    set_titlebar(c, c.floating or c.first_tag.layout == awful.layout.suit.floating)
-end)
-
-tag.connect_signal('property::layout', function(t)
-    for _, c in pairs(t:clients()) do
-        if t.layout == awful.layout.suit.floating then
-            set_titlebar(c, true)
-        else
-            set_titlebar(c, false)
-        end
-    end
-end)
-
--- Add a titlebar if titlebars_enabled is set to true in the rules.
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({}, 1, function()
-            c:emit_signal("request::activate", "titlebar", { raise = true })
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ modkey }, 1, function()
-            c:emit_signal("request::activate", "titlebar", { raise = true })
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c):setup {
-        { -- Left
-            -- awful.titlebar.widget.iconwidget(c),
-            -- buttons = buttons,
-            layout = wibox.layout.fixed.horizontal
-        },
-        {     -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            -- awful.titlebar.widget.floatingbutton (c),
-            -- awful.titlebar.widget.maximizedbutton(c),
-            -- awful.titlebar.widget.stickybutton   (c),
-            -- awful.titlebar.widget.ontopbutton    (c),
-            -- awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
-end)
+-- local function set_titlebar(client, flag)
+--     if flag then
+--         if client.titlebar == nil then
+--             client:emit_signal('request::titlebars', 'rules', {})
+--         end
+--         awful.titlebar.show(client)
+--     else
+--         awful.titlebar.hide(client)
+--     end
+-- end
+--
+-- client.connect_signal('property::floating', function(c)
+--     set_titlebar(c, c.floating)
+-- end)
+--
+-- client.connect_signal('manage', function(c)
+--     set_titlebar(c, c.floating or c.first_tag.layout == awful.layout.suit.floating)
+-- end)
+--
+-- tag.connect_signal('property::layout', function(t)
+--     for _, c in pairs(t:clients()) do
+--         if t.layout == awful.layout.suit.floating then
+--             set_titlebar(c, true)
+--         else
+--             set_titlebar(c, false)
+--         end
+--     end
+-- end)
+--
+-- -- Add a titlebar if titlebars_enabled is set to true in the rules.
+-- client.connect_signal('request::titlebars', function(c)
+--     -- buttons for the titlebar
+--     local buttons = gears.table.join(
+--         awful.button({}, 1, function()
+--             c:emit_signal('request::activate', 'titlebar', { raise = true })
+--             awful.mouse.client.move(c)
+--         end),
+--         awful.button({ modkey }, 1, function()
+--             c:emit_signal('request::activate', 'titlebar', { raise = true })
+--             awful.mouse.client.resize(c)
+--         end)
+--     )
+--
+--     awful.titlebar(c):setup {
+--         { -- Left
+--             -- awful.titlebar.widget.iconwidget(c),
+--             -- buttons = buttons,
+--             layout = wibox.layout.fixed.horizontal
+--         },
+--         {     -- Middle
+--             { -- Title
+--                 align  = 'center',
+--                 widget = awful.titlebar.widget.titlewidget(c)
+--             },
+--             buttons = buttons,
+--             layout  = wibox.layout.flex.horizontal
+--         },
+--         { -- Right
+--             -- awful.titlebar.widget.floatingbutton (c),
+--             -- awful.titlebar.widget.maximizedbutton(c),
+--             -- awful.titlebar.widget.stickybutton   (c),
+--             -- awful.titlebar.widget.ontopbutton    (c),
+--             -- awful.titlebar.widget.closebutton    (c),
+--             layout = wibox.layout.fixed.horizontal()
+--         },
+--         layout = wibox.layout.align.horizontal
+--     }
+-- end)
 
 client.connect_signal('focus', function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal('unfocus', function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
 -- User defined
-beautiful.useless_gap = 10
+-- beautiful.useless_gap = 10
 awful.spawn.with_shell('picom')
