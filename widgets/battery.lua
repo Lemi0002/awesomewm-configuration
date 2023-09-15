@@ -1,13 +1,14 @@
 local gears = require('gears')
 local wibox = require('wibox')
+local utilities = require('utilities')
 
-local battery = {}
+local battery_module = {}
 
 local PATH_POWER_SUPPLY = '/sys/class/power_supply/'
 local DEFAULTS = {
     adapter = 'BAT0',
     timeout = 10,
-    character = {
+    text = {
         leading = '',
         delimiter = ' ',
         trailing = '%',
@@ -30,19 +31,7 @@ local DEFAULTS = {
     },
 }
 
-local read_line = function(file_name)
-    local file = io.open(file_name)
-
-    if not file then
-        return nil
-    end
-
-    local text = file:read('*line')
-    file:close()
-    return text
-end
-
-battery.initialize = function(arguments)
+battery_module.initialize = function(arguments)
     if arguments == nil then
         arguments = {}
     end
@@ -51,14 +40,14 @@ battery.initialize = function(arguments)
     self.adapter = arguments.adapter or DEFAULTS.adapter
     self.timeout = arguments.timeout or DEFAULTS.timeout
 
-    if arguments.character == nil then
-        arguments.character = {}
+    if arguments.text == nil then
+        arguments.text = {}
     end
 
-    self.character = {
-        leading = arguments.character.leading or DEFAULTS.character.leading,
-        delimiter = arguments.character.delimiter or DEFAULTS.character.delimiter,
-        trailing = arguments.character.trailing or DEFAULTS.character.trailing,
+    self.text = {
+        leading = arguments.text.leading or DEFAULTS.text.leading,
+        delimiter = arguments.text.delimiter or DEFAULTS.text.delimiter,
+        trailing = arguments.text.trailing or DEFAULTS.text.trailing,
     }
 
     if arguments.indicator == nil then
@@ -91,15 +80,15 @@ battery.initialize = function(arguments)
     }
     self.widget = wibox.widget.textbox()
     self.timer = gears.timer({ timeout = self.timeout })
-    self.timer:connect_signal('timeout', function() battery.update(self) end)
+    self.timer:connect_signal('timeout', function() battery_module.update(self) end)
     self.timer:start()
-    battery.update(self)
+    battery_module.update(self)
     return self
 end
 
-battery.update = function(self)
-    local capacity = tonumber(read_line(self.file.capacity) or '0') or 0
-    local status = string.lower(read_line(self.file.status) or '')
+battery_module.update = function(self)
+    local capacity = tonumber(utilities.read_line(self.file.capacity) or '0') or 0
+    local status = string.lower(utilities.read_line(self.file.status) or '')
     local indicator = ''
 
     if status == 'discharging' then
@@ -112,11 +101,11 @@ battery.update = function(self)
     end
 
     self.widget.text =
-        self.character.leading ..
+        self.text.leading ..
         indicator ..
-        self.character.delimiter ..
+        self.text.delimiter ..
         capacity ..
-        self.character.trailing
+        self.text.trailing
 end
 
-return battery
+return battery_module
