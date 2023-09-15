@@ -50,15 +50,14 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_themes_dir() .. 'default/theme.lua')
-beautiful.init('/home/yanick/.config/awesome/theme.lua')
+beautiful.init(os.getenv('HOME') .. '/.config/awesome/theme.lua')
 beautiful.wallpaper = awful.util.get_configuration_dir() .. '../../version-control/wallpapers/0059.jpg'
 
 -- This is used later as the default terminal and editor to run.
-terminal = 'kitty'
--- editor = os.getenv('EDITOR')
-editor = 'nvim'
-editor_cmd = terminal .. ' -e ' .. editor
-modkey = 'Mod4'
+local terminal = 'kitty'
+local editor = os.getenv('EDITOR') or 'nvim'
+local editor_cmd = terminal .. ' -e ' .. editor
+local modkey = 'Mod4'
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -374,6 +373,18 @@ clientkeys = gears.table.join(
             awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
         end,
         { description = 'mute volume', group = 'general' }),
+
+    -- Brightness control
+    awful.key({}, 'XF86MonBrightnessUp',
+        function()
+            awful.util.spawn('backlight_control +10', false)
+        end,
+        { description = 'increase brightness', group = 'general' }),
+    awful.key({}, 'XF86MonBrightnessDown',
+        function()
+            awful.util.spawn('backlight_control -10', false)
+        end,
+        { description = 'decrease brightness', group = 'general' }),
 
     -- Media Keys
     -- awful.key({}, 'XF86AudioPlay', function()
