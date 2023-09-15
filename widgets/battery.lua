@@ -16,16 +16,16 @@ local DEFAULTS = {
         plugged = '\u{f0084}',
         unavailable = '\u{f0091}',
         unplugged = {
-            ['10'] = '\u{f007a}',
-            ['20'] = '\u{f007b}',
-            ['30'] = '\u{f007c}',
-            ['40'] = '\u{f007d}',
-            ['50'] = '\u{f007e}',
-            ['60'] = '\u{f007f}',
-            ['70'] = '\u{f0080}',
-            ['80'] = '\u{f0081}',
-            ['90'] = '\u{f0082}',
-            ['100'] = '\u{f0079}',
+            [10] = '\u{f007a}',
+            [20] = '\u{f007b}',
+            [30] = '\u{f007c}',
+            [40] = '\u{f007d}',
+            [50] = '\u{f007e}',
+            [60] = '\u{f007f}',
+            [70] = '\u{f0080}',
+            [80] = '\u{f0081}',
+            [90] = '\u{f0082}',
+            [100] = '\u{f0079}',
         },
     },
 }
@@ -73,16 +73,16 @@ battery.initialize = function(arguments)
         plugged = arguments.indicator.plugged or DEFAULTS.indicator.plugged,
         unavailable = arguments.indicator.unavailable or DEFAULTS.indicator.unavailable,
         unplugged = {
-            ['10'] = arguments.indicator.unplugged['10'] or DEFAULTS.indicator.unplugged['10'],
-            ['20'] = arguments.indicator.unplugged['20'] or DEFAULTS.indicator.unplugged['20'],
-            ['30'] = arguments.indicator.unplugged['30'] or DEFAULTS.indicator.unplugged['30'],
-            ['40'] = arguments.indicator.unplugged['40'] or DEFAULTS.indicator.unplugged['40'],
-            ['50'] = arguments.indicator.unplugged['50'] or DEFAULTS.indicator.unplugged['50'],
-            ['60'] = arguments.indicator.unplugged['60'] or DEFAULTS.indicator.unplugged['60'],
-            ['70'] = arguments.indicator.unplugged['70'] or DEFAULTS.indicator.unplugged['70'],
-            ['80'] = arguments.indicator.unplugged['80'] or DEFAULTS.indicator.unplugged['80'],
-            ['90'] = arguments.indicator.unplugged['90'] or DEFAULTS.indicator.unplugged['90'],
-            ['100'] = arguments.indicator.unplugged['100'] or DEFAULTS.indicator.unplugged['100'],
+            [10] = arguments.indicator.unplugged[10] or DEFAULTS.indicator.unplugged[10],
+            [20] = arguments.indicator.unplugged[20] or DEFAULTS.indicator.unplugged[20],
+            [30] = arguments.indicator.unplugged[30] or DEFAULTS.indicator.unplugged[30],
+            [40] = arguments.indicator.unplugged[40] or DEFAULTS.indicator.unplugged[40],
+            [50] = arguments.indicator.unplugged[50] or DEFAULTS.indicator.unplugged[50],
+            [60] = arguments.indicator.unplugged[60] or DEFAULTS.indicator.unplugged[60],
+            [70] = arguments.indicator.unplugged[70] or DEFAULTS.indicator.unplugged[70],
+            [80] = arguments.indicator.unplugged[80] or DEFAULTS.indicator.unplugged[80],
+            [90] = arguments.indicator.unplugged[90] or DEFAULTS.indicator.unplugged[90],
+            [100] = arguments.indicator.unplugged[100] or DEFAULTS.indicator.unplugged[100],
         },
     }
     self.file = {
@@ -104,7 +104,7 @@ battery.update = function(self)
 
     if status == 'discharging' then
         local index = (math.floor((capacity - 1) / 10) + 1) * 10
-        indicator = self.indicator.unplugged[tostring(index)]
+        indicator = self.indicator.unplugged[index]
     elseif status == 'charging' then
         indicator = self.indicator.plugged
     else
