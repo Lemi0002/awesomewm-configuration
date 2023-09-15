@@ -17,6 +17,7 @@ local hotkeys_popup = require('awful.hotkeys_popup')
 require('awful.hotkeys_popup.keys')
 
 local battery = require('widgets.battery')
+local volume = require('widgets.volume')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -89,6 +90,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %d.%m.%y  \u{f0954} %R')
 local widget_keyboardlayout = awful.widget.keyboardlayout()
 local widget_battery = battery.initialize()
+local widget_volume = volume.initialize()
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -179,6 +181,19 @@ awful.screen.connect_for_each_screen(function(s)
         },
         {
             wibox.widget.systray(),
+            {
+                {
+                    {
+                        widget = widget_volume.widget,
+                    },
+                    left   = beautiful.margin_horizontal,
+                    right  = beautiful.margin_horizontal,
+                    widget = wibox.container.margin,
+                },
+                bg = beautiful.color.bg[3],
+                shape = gears.shape.rounded_rect,
+                widget = wibox.container.background,
+            },
             {
                 {
                     {
@@ -360,17 +375,20 @@ clientkeys = gears.table.join(
     -- Volume keys
     awful.key({}, 'XF86AudioLowerVolume',
         function()
-            awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ -5%', false)
+            volume.decrease_volume(widget_volume)
+            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ -5%', false)
         end,
         { description = 'decrease volume', group = 'general' }),
     awful.key({}, 'XF86AudioRaiseVolume',
         function()
-            awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ +5%', false)
+            volume.increase_volume(widget_volume)
+            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ +5%', false)
         end,
         { description = 'increase volume', group = 'general' }),
     awful.key({}, 'XF86AudioMute',
         function()
-            awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
+            volume.toggle_mute(widget_volume)
+            -- awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
         end,
         { description = 'mute volume', group = 'general' }),
 
