@@ -52,7 +52,7 @@ end
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_themes_dir() .. 'default/theme.lua')
 beautiful.init(os.getenv('HOME') .. '/.config/awesome/theme.lua')
-beautiful.wallpaper = awful.util.get_configuration_dir() .. '../../version-control/wallpapers/0059.jpg'
+beautiful.wallpaper = awful.util.get_configuration_dir() .. 'wallpapers/mountain-road.jpg'
 
 -- This is used later as the default terminal and editor to run.
 local terminal = 'kitty'
