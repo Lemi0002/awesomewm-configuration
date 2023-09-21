@@ -14,9 +14,10 @@ local DEFAULTS = {
         trailing = '%',
     },
     indicator = {
-        plugged = '\u{f0084}',
+        charging = '\u{f0084}',
+        not_charging = '\u{f008c}',
         unavailable = '\u{f0091}',
-        unplugged = {
+        discharging = {
             [10] = '\u{f007a}',
             [20] = '\u{f007b}',
             [30] = '\u{f007c}',
@@ -54,24 +55,25 @@ battery_module.initialize = function(arguments)
         arguments.indicator = {}
     end
 
-    if arguments.indicator.unplugged == nil then
-        arguments.indicator.unplugged = {}
+    if arguments.indicator.discharging == nil then
+        arguments.indicator.discharging = {}
     end
 
     self.indicator = {
-        plugged = arguments.indicator.plugged or DEFAULTS.indicator.plugged,
+        charging = arguments.indicator.charging or DEFAULTS.indicator.charging,
+        not_charging = arguments.indicator.not_charging or DEFAULTS.indicator.not_charging,
         unavailable = arguments.indicator.unavailable or DEFAULTS.indicator.unavailable,
-        unplugged = {
-            [10] = arguments.indicator.unplugged[10] or DEFAULTS.indicator.unplugged[10],
-            [20] = arguments.indicator.unplugged[20] or DEFAULTS.indicator.unplugged[20],
-            [30] = arguments.indicator.unplugged[30] or DEFAULTS.indicator.unplugged[30],
-            [40] = arguments.indicator.unplugged[40] or DEFAULTS.indicator.unplugged[40],
-            [50] = arguments.indicator.unplugged[50] or DEFAULTS.indicator.unplugged[50],
-            [60] = arguments.indicator.unplugged[60] or DEFAULTS.indicator.unplugged[60],
-            [70] = arguments.indicator.unplugged[70] or DEFAULTS.indicator.unplugged[70],
-            [80] = arguments.indicator.unplugged[80] or DEFAULTS.indicator.unplugged[80],
-            [90] = arguments.indicator.unplugged[90] or DEFAULTS.indicator.unplugged[90],
-            [100] = arguments.indicator.unplugged[100] or DEFAULTS.indicator.unplugged[100],
+        discharging = {
+            [10] = arguments.indicator.discharging[10] or DEFAULTS.indicator.discharging[10],
+            [20] = arguments.indicator.discharging[20] or DEFAULTS.indicator.discharging[20],
+            [30] = arguments.indicator.discharging[30] or DEFAULTS.indicator.discharging[30],
+            [40] = arguments.indicator.discharging[40] or DEFAULTS.indicator.discharging[40],
+            [50] = arguments.indicator.discharging[50] or DEFAULTS.indicator.discharging[50],
+            [60] = arguments.indicator.discharging[60] or DEFAULTS.indicator.discharging[60],
+            [70] = arguments.indicator.discharging[70] or DEFAULTS.indicator.discharging[70],
+            [80] = arguments.indicator.discharging[80] or DEFAULTS.indicator.discharging[80],
+            [90] = arguments.indicator.discharging[90] or DEFAULTS.indicator.discharging[90],
+            [100] = arguments.indicator.discharging[100] or DEFAULTS.indicator.discharging[100],
         },
     }
     self.file = {
@@ -93,9 +95,11 @@ battery_module.update = function(self)
 
     if status == 'discharging' then
         local index = (math.floor((capacity - 1) / 10) + 1) * 10
-        indicator = self.indicator.unplugged[index]
+        indicator = self.indicator.discharging[index]
     elseif status == 'charging' then
-        indicator = self.indicator.plugged
+        indicator = self.indicator.charging
+    elseif status == 'not charging' then
+        indicator = self.indicator.not_charging
     else
         indicator = self.indicator.unavailable
     end
