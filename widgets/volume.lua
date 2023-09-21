@@ -7,7 +7,7 @@ local volume_module = {}
 
 local DEFAULTS = {
     device = '@DEFAULT_SINK@',
-    timeout = 10,
+    timeout = 5,
     volume = {
         step = 5,
         max = 100,
