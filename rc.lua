@@ -310,8 +310,11 @@ globalkeys = gears.table.join(
         { description = 'restore minimized', group = 'client' }),
 
     -- Prompt
-    awful.key({ modkey }, 'r', function() awful.screen.focused().mypromptbox:run() end,
-        { description = 'run prompt', group = 'launcher' }),
+    awful.key({ modkey }, 'r',
+        function()
+            awful.util.spawn('rofi -show combi', false)
+        end,
+        { description = 'run rofi', group = 'launcher' }),
 
     awful.key({ modkey }, 'x',
         function()
@@ -395,12 +398,12 @@ clientkeys = gears.table.join(
     -- Brightness control
     awful.key({}, 'XF86MonBrightnessUp',
         function()
-            awful.util.spawn('backlight_control +10', false)
+            awful.util.spawn('backlight_control +5', false)
         end,
         { description = 'increase brightness', group = 'general' }),
     awful.key({}, 'XF86MonBrightnessDown',
         function()
-            awful.util.spawn('backlight_control -10', false)
+            awful.util.spawn('backlight_control -5', false)
         end,
         { description = 'decrease brightness', group = 'general' }),
 
@@ -588,26 +591,6 @@ awful.rules.rules = {
         properties = {
             floating = true
         },
-    },
-    {
-        rule = {
-            class = 'firefox'
-        },
-        properties = {
-            maximized = false,
-            screen = 1,
-            tag = '1'
-        }
-    },
-    {
-        rule = {
-            class = 'Google-chrome'
-        },
-        properties = {
-            maximized = false,
-            screen = 1,
-            tag = '9'
-        }
     },
 }
 -- }}}
