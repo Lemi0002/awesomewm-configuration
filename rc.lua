@@ -18,6 +18,7 @@ require('awful.hotkeys_popup.keys')
 
 local battery = require('widgets.battery')
 local volume = require('widgets.volume')
+local wallpaper = require('core.wallpaper')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -52,7 +53,8 @@ end
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_themes_dir() .. 'default/theme.lua')
 beautiful.init(os.getenv('HOME') .. '/.config/awesome/theme.lua')
-beautiful.wallpaper = awful.util.get_configuration_dir() .. 'wallpapers/mountain-road.jpg'
+core_wallpaper = wallpaper.initialize()
+-- beautiful.wallpaper = awful.util.get_configuration_dir() .. 'wallpapers/mountain-road.jpg'
 
 -- This is used later as the default terminal and editor to run.
 local terminal = 'kitty'
@@ -102,22 +104,11 @@ local taglist_buttons = gears.table.join(
     end)
 )
 
-local function set_wallpaper(s)
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == 'function' then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, true)
-    end
-end
-
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal('property::geometry', set_wallpaper)
+-- screen.connect_signal('property::geometry', function() wallpaper.set_wallpaper(core_wallpaper, nil) end)
 
 awful.screen.connect_for_each_screen(function(s)
-    set_wallpaper(s)
+    -- wallpaper.set_wallpaper(core_wallpaper, s)
 
     -- Each screen has its own tag table.
     awful.tag({ '1', '2', '3', '4', '5', '6', '7', '8', '9' }, s, awful.layout.layouts[1])
@@ -616,3 +607,4 @@ client.connect_signal('unfocus', function(c) c.border_color = beautiful.border_n
 
 -- User defined
 awful.spawn.with_shell('picom')
+awful.spawn.with_shell('nitrogen --restore')
