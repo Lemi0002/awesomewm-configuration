@@ -263,6 +263,11 @@ globalkeys = gears.table.join(
             end
         end,
         { description = 'go back', group = 'client' }),
+    awful.key({ modkey }, 'w',
+        function ()
+            awful.screen.focused().mywibox.visible = not awful.screen.focused().mywibox.visible
+        end,
+        { description = 'toggle wibar', group = 'screen' }),
 
     -- Standard program
     awful.key({ modkey, }, 'Return', function() awful.spawn(terminal) end,
@@ -316,11 +321,7 @@ globalkeys = gears.table.join(
                 history_path = awful.util.get_cache_dir() .. '/history_eval'
             }
         end,
-        { description = 'lua execute prompt', group = 'awesome' }),
-
-    -- Menubar
-    awful.key({ modkey }, 'p', function() menubar.show() end,
-        { description = 'show the menubar', group = 'launcher' })
+        { description = 'lua execute prompt', group = 'awesome' })
 )
 
 clientkeys = gears.table.join(
@@ -328,6 +329,14 @@ clientkeys = gears.table.join(
         function(c)
             c.fullscreen = not c.fullscreen
             c:raise()
+            --
+            -- if c.fullscreen then
+            --     -- c.screen.mywibox.visible = false
+            --     awful.screen.focused().mywibox.visible = false
+            -- else
+            --     -- c.screen.mywibox.visible = true
+            --     awful.screen.focused().mywibox.visible = true
+            -- end
         end,
         { description = 'toggle fullscreen', group = 'client' }),
     awful.key({ modkey, }, 'q', function(c) c:kill() end,
