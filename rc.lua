@@ -92,7 +92,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %d.%m.%y  \u{f0954} %R')
 local widget_keyboardlayout = awful.widget.keyboardlayout()
 local widget_battery = battery.initialize()
-local widget_volume = volume.initialize()
+local widget_volume = volume.initialize({volume = {step = 2}})
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
