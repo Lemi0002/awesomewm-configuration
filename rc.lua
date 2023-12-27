@@ -17,6 +17,7 @@ local hotkeys_popup = require('awful.hotkeys_popup')
 require('awful.hotkeys_popup.keys')
 
 local battery = require('widgets.battery')
+local brightness = require('widgets.brightness')
 local volume = require('widgets.volume')
 local wallpaper = require('core.wallpaper')
 
@@ -91,6 +92,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %d.%m.%y  \u{f0954} %R')
 local widget_keyboardlayout = awful.widget.keyboardlayout()
 local widget_battery = battery.initialize()
+local widget_brightness = brightness.initialize()
 local widget_volume = volume.initialize({volume = {step = 2}})
 
 -- Create a wibox for each screen and add it
@@ -175,6 +177,19 @@ awful.screen.connect_for_each_screen(function(s)
                 {
                     {
                         widget = widget_volume.widget,
+                    },
+                    left   = beautiful.margin_horizontal,
+                    right  = beautiful.margin_horizontal,
+                    widget = wibox.container.margin,
+                },
+                bg = beautiful.color.bg[3],
+                shape = gears.shape.rounded_rect,
+                widget = wibox.container.background,
+            },
+            {
+                {
+                    {
+                        widget = widget_brightness.widget,
                     },
                     left   = beautiful.margin_horizontal,
                     right  = beautiful.margin_horizontal,
@@ -345,12 +360,12 @@ globalkeys = gears.table.join(
     -- Brightness control
     awful.key({}, 'XF86MonBrightnessUp',
         function()
-            awful.util.spawn('backlight_control +5', false)
+            brightness.increase_brightness(widget_brightness)
         end,
         { description = 'increase brightness', group = 'general' }),
     awful.key({}, 'XF86MonBrightnessDown',
         function()
-            awful.util.spawn('backlight_control -5', false)
+            brightness.decrease_brightness(widget_brightness)
         end,
         { description = 'decrease brightness', group = 'general' })
 )
