@@ -24,4 +24,15 @@ utilities.read_line = function(file_name)
     return text
 end
 
+utilities.write_file = function(file_name, text)
+    local file = io.open(file_name, 'w')
+
+    if not file then
+        return nil
+    end
+
+    file:write(text)
+    file:close()
+end
+
 return utilities
