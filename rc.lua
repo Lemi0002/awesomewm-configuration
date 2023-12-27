@@ -54,7 +54,6 @@ end
 -- beautiful.init(gears.filesystem.get_themes_dir() .. 'default/theme.lua')
 beautiful.init(os.getenv('HOME') .. '/.config/awesome/theme.lua')
 core_wallpaper = wallpaper.initialize()
--- beautiful.wallpaper = awful.util.get_configuration_dir() .. 'wallpapers/mountain-road.jpg'
 
 -- This is used later as the default terminal and editor to run.
 local terminal = 'kitty'
@@ -105,10 +104,10 @@ local taglist_buttons = gears.table.join(
 )
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
--- screen.connect_signal('property::geometry', function() wallpaper.set_wallpaper(core_wallpaper, nil) end)
+screen.connect_signal('property::geometry', function() wallpaper.set_wallpaper(core_wallpaper, nil) end)
 
 awful.screen.connect_for_each_screen(function(s)
-    -- wallpaper.set_wallpaper(core_wallpaper, s)
+    wallpaper.set_wallpaper(core_wallpaper, s)
 
     -- Each screen has its own tag table.
     awful.tag({ '1', '2', '3', '4', '5', '6', '7', '8', '9' }, s, awful.layout.layouts[1])
@@ -321,7 +320,39 @@ globalkeys = gears.table.join(
                 history_path = awful.util.get_cache_dir() .. '/history_eval'
             }
         end,
-        { description = 'lua execute prompt', group = 'awesome' })
+        { description = 'lua execute prompt', group = 'awesome' }),
+
+    -- Volume keys
+    awful.key({}, 'XF86AudioLowerVolume',
+        function()
+            volume.decrease_volume(widget_volume)
+            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ -5%', false)
+        end,
+        { description = 'decrease volume', group = 'general' }),
+    awful.key({}, 'XF86AudioRaiseVolume',
+        function()
+            volume.increase_volume(widget_volume)
+            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ +5%', false)
+        end,
+        { description = 'increase volume', group = 'general' }),
+    awful.key({}, 'XF86AudioMute',
+        function()
+            volume.toggle_mute(widget_volume)
+            -- awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
+        end,
+        { description = 'mute volume', group = 'general' }),
+
+    -- Brightness control
+    awful.key({}, 'XF86MonBrightnessUp',
+        function()
+            awful.util.spawn('backlight_control +5', false)
+        end,
+        { description = 'increase brightness', group = 'general' }),
+    awful.key({}, 'XF86MonBrightnessDown',
+        function()
+            awful.util.spawn('backlight_control -5', false)
+        end,
+        { description = 'decrease brightness', group = 'general' })
 )
 
 clientkeys = gears.table.join(
@@ -374,38 +405,6 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         { description = '(un)maximize horizontally', group = 'client' }),
-
-    -- Volume keys
-    awful.key({}, 'XF86AudioLowerVolume',
-        function()
-            volume.decrease_volume(widget_volume)
-            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ -5%', false)
-        end,
-        { description = 'decrease volume', group = 'general' }),
-    awful.key({}, 'XF86AudioRaiseVolume',
-        function()
-            volume.increase_volume(widget_volume)
-            -- awful.util.spawn('pactl set-sink-volume @DEFAULT_SINK@ +5%', false)
-        end,
-        { description = 'increase volume', group = 'general' }),
-    awful.key({}, 'XF86AudioMute',
-        function()
-            volume.toggle_mute(widget_volume)
-            -- awful.util.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle', false)
-        end,
-        { description = 'mute volume', group = 'general' }),
-
-    -- Brightness control
-    awful.key({}, 'XF86MonBrightnessUp',
-        function()
-            awful.util.spawn('backlight_control +5', false)
-        end,
-        { description = 'increase brightness', group = 'general' }),
-    awful.key({}, 'XF86MonBrightnessDown',
-        function()
-            awful.util.spawn('backlight_control -5', false)
-        end,
-        { description = 'decrease brightness', group = 'general' }),
 
     -- Media Keys
     -- awful.key({}, 'XF86AudioPlay', function()
