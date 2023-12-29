@@ -119,6 +119,7 @@ local widget_calendar = awful.widget.calendar_popup.year({
     },
     style_normal = {
         fg_color = beautiful.color.fg[1],
+        shape = gears.shape.rounded_rect,
     },
     style_focus = {
         bg_color = beautiful.color.highlight[1],
@@ -167,9 +168,9 @@ awful.screen.connect_for_each_screen(function(s)
         style           = {
             bg_empty = beautiful.color.bg[2],
             bg_occupied = beautiful.color.bg[3],
-            bg_focus = beautiful.bg_focus,
-            bg_urgent = beautiful.bg_urgent,
-            bg_volatile = beautiful.bg_urgent,
+            bg_focus = beautiful.color.highlight[1],
+            bg_urgent = beautiful.color.highlight[3],
+            bg_volatile = beautiful.color.highlight[3],
             shape = gears.shape.rounded_rect,
         },
         layout          = {
@@ -195,7 +196,7 @@ awful.screen.connect_for_each_screen(function(s)
         position = 'top',
         screen = s,
         border_width = beautiful.border_width,
-        border_color = beautiful.bg_normal,
+        border_color = beautiful.color.bg[1],
     })
     s.mywibox:setup({
         {

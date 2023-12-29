@@ -28,16 +28,12 @@ theme.color                                     = {
 
 theme.bg_normal                                 = theme.color.bg[1]
 theme.bg_focus                                  = theme.color.highlight[1]
-theme.bg_urgent                                 = theme.color.highlight[3]
-theme.bg_minimize                               = theme.color.highlight[2]
 
 theme.fg_normal                                 = theme.color.fg[2]
 theme.fg_focus                                  = theme.color.fg[2]
-theme.fg_urgent                                 = theme.color.fg[2]
-theme.fg_minimize                               = theme.color.fg[2]
 
-theme.border_normal                             = theme.color.bg[1]
-theme.border_focus                              = theme.color.highlight[1]
+theme.border_normal                             = theme.bg_normal
+theme.border_focus                              = theme.bg_focus
 
 theme.useless_gap                               = 10
 theme.border_width                              = 10
