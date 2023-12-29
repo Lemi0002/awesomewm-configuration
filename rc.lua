@@ -88,12 +88,50 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- {{{ Wibar
--- Create a textclock widget
-local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %Y-%m-%d  \u{f0954} %R')
-local widget_keyboardlayout = awful.widget.keyboardlayout()
+local widget_calendar = awful.widget.calendar_popup.year({
+    week_numbers = true,
+    style_year = {
+        shape = gears.shape.rounded_rect,
+        border_color = beautiful.color.highlight[2],
+    },
+    style_yearheader = {
+        shape = gears.shape.rounded_rect,
+    },
+    style_month = {
+        shape = gears.shape.rounded_rect,
+    },
+    style_header = {
+        bg_color = beautiful.color.bg[3],
+        shape = gears.shape.rounded_rect,
+        padding = 5,
+    },
+    style_weekday = {
+        fg_color = beautiful.color.fg[1],
+        bg_color = beautiful.color.bg[2],
+        shape = gears.shape.rounded_rect,
+        padding = 5,
+    },
+    style_weeknumber = {
+        fg_color = beautiful.color.fg[1],
+        bg_color = beautiful.color.bg[2],
+        shape = gears.shape.rounded_rect,
+        padding = 5,
+    },
+    style_normal = {
+        fg_color = beautiful.color.fg[1],
+    },
+    style_focus = {
+        bg_color = beautiful.color.highlight[1],
+        shape = gears.shape.rounded_rect,
+        padding = 5,
+    },
+})
+local widget_textclock = awful.widget.textclock('\u{f00ed} %a %Y-%m-%d  \u{f0954} %R')
 local widget_battery = battery.initialize()
 local widget_brightness = brightness.initialize()
-local widget_volume = volume.initialize({volume = {step = 2}})
+local widget_volume = volume.initialize({ volume = { step = 2 } })
+
+widget_calendar:call_calendar(0, 'tr', awful.screen.focused())
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -141,14 +179,14 @@ awful.screen.connect_for_each_screen(function(s)
         widget_template = {
             {
                 {
-                    id     = "text_role",
+                    id     = 'text_role',
                     widget = wibox.widget.textbox,
                 },
                 left   = beautiful.margin_horizontal,
                 right  = beautiful.margin_horizontal,
                 widget = wibox.container.margin,
             },
-            id     = "background_role",
+            id     = 'background_role',
             widget = wibox.container.background,
         },
     })
@@ -162,6 +200,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox:setup({
         {
             layout = wibox.layout.fixed.horizontal,
+            spacing = beautiful.spacing,
             s.mytaglist,
             s.mypromptbox,
         },
@@ -223,6 +262,11 @@ awful.screen.connect_for_each_screen(function(s)
                 },
                 bg = beautiful.color.bg[3],
                 shape = gears.shape.rounded_rect,
+                buttons = gears.table.join(
+                    awful.button({}, 1, function()
+                        widget_calendar:toggle()
+                    end)
+                ),
                 widget = wibox.container.background,
             },
             s.mylayoutbox,
@@ -278,7 +322,7 @@ globalkeys = gears.table.join(
         end,
         { description = 'go back', group = 'client' }),
     awful.key({ modkey }, 'w',
-        function ()
+        function()
             awful.screen.focused().mywibox.visible = not awful.screen.focused().mywibox.visible
         end,
         { description = 'toggle wibar', group = 'screen' }),
