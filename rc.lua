@@ -89,7 +89,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a textclock widget
-local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %d.%m.%y  \u{f0954} %R')
+local widget_textclock = wibox.widget.textclock('\u{f00ed} %a %Y-%m-%d  \u{f0954} %R')
 local widget_keyboardlayout = awful.widget.keyboardlayout()
 local widget_battery = battery.initialize()
 local widget_brightness = brightness.initialize()
