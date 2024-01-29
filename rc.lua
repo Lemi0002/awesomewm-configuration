@@ -402,6 +402,28 @@ globalkeys = gears.table.join(
         end,
         { description = 'mute volume', group = 'general' }),
 
+    -- Media control
+    awful.key({}, 'XF86AudioPlay',
+        function()
+            awful.util.spawn('playerctl play', false)
+        end,
+        { description = 'play media', group = 'general' }),
+    awful.key({}, 'XF86AudioPause',
+        function()
+            awful.util.spawn('playerctl pause', false)
+        end,
+        { description = 'pause media', group = 'general' }),
+    awful.key({}, 'XF86AudioPrev',
+        function()
+            awful.util.spawn('playerctl previous', false)
+        end,
+        { description = 'previous media', group = 'general' }),
+    awful.key({}, 'XF86AudioNext',
+        function()
+            awful.util.spawn('playerctl next', false)
+        end,
+        { description = 'next media', group = 'general' }),
+
     -- Brightness control
     awful.key({}, 'XF86MonBrightnessUp',
         function()
@@ -675,3 +697,4 @@ client.connect_signal('unfocus', function(c) c.border_color = beautiful.border_n
 
 -- User defined
 awful.spawn.with_shell('picom')
+awful.spawn.with_shell('playerctld deamon')
