@@ -1,13 +1,13 @@
-local theme_assets                              = require("beautiful.theme_assets")
-local xresources                                = require("beautiful.xresources")
-local dpi                                       = xresources.apply_dpi
-local gfs                                       = require("gears.filesystem")
-local themes_path                               = gfs.get_themes_dir()
+local theme_assets         = require("beautiful.theme_assets")
+local xresources           = require("beautiful.xresources")
+local dpi                  = xresources.apply_dpi
+local gfs                  = require("gears.filesystem")
+local themes_path          = gfs.get_themes_dir()
 
-local theme                                     = {}
+local theme                = {}
 
-theme.font                                      = "FiraCodeNerdFont 10"
-theme.color                                     = {
+theme.font                 = "FiraCodeNerdFont 10"
+theme.color                = {
     bg = {
         [1] = '#131313',
         [2] = '#292929',
@@ -26,19 +26,24 @@ theme.color                                     = {
     },
 }
 
-theme.bg_normal                                 = theme.color.bg[1]
-theme.bg_focus                                  = theme.color.highlight[1]
+theme.bg_normal            = theme.color.bg[1]
+theme.bg_focus             = theme.color.highlight[1]
 
-theme.fg_normal                                 = theme.color.fg[2]
-theme.fg_focus                                  = theme.color.fg[2]
+theme.fg_normal            = theme.color.fg[2]
+theme.fg_focus             = theme.color.fg[2]
 
-theme.border_normal                             = theme.bg_normal
-theme.border_focus                              = theme.bg_focus
+theme.border_normal        = theme.bg_normal
+theme.border_focus         = theme.bg_focus
 
-theme.useless_gap                               = 10
-theme.border_width                              = 10
-theme.spacing                                   = 15
-theme.margin_horizontal                         = 20
+theme.hotkeys_bg           = theme.color.bg[1]
+theme.hotkeys_border_color = theme.color.highlight[2]
+theme.snap_bg              = theme.color.highlight[3]
+
+theme.useless_gap          = 10
+theme.border_width         = 10
+theme.spacing              = 15
+theme.margin_horizontal    = 20
+
 
 theme.menu_submenu_icon                         = themes_path .. "default/submenu.png"
 theme.menu_height                               = dpi(15)
