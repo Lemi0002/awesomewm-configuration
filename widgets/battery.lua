@@ -32,7 +32,7 @@ local DEFAULTS = {
     },
 }
 
-battery_module.initialize = function(arguments)
+battery_module.new = function(arguments)
     if arguments == nil then
         arguments = {}
     end

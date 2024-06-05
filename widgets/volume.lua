@@ -80,7 +80,7 @@ volume_module.increase_volume = function(self)
     volume_module.update(self)
 end
 
-volume_module.initialize = function(arguments)
+volume_module.new = function(arguments)
     if arguments == nil then
         arguments = {}
     end

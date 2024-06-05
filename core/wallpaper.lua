@@ -9,7 +9,7 @@ local DEFAULTS = {
     maximized = true,
 }
 
-wallpaper_module.initialize = function(arguments)
+wallpaper_module.new = function(arguments)
     if arguments == nil then
         arguments = {}
     end

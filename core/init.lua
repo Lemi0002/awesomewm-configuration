@@ -1,1 +1,6 @@
-require('core.wallpaper')
+require('core.error')
+require('core.client')
+require('core.rules')
+require('core.screen')
+local core_keymaps = require('core.keymaps')
+core_keymaps.global.apply_keys()

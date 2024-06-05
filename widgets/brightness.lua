@@ -54,7 +54,7 @@ brightness_module.increase_brightness = function(self)
     brightness_module.update(self)
 end
 
-brightness_module.initialize = function(arguments)
+brightness_module.new = function(arguments)
     if arguments == nil then
         arguments = {}
     end
