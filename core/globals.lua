@@ -1,5 +1,5 @@
 local globals_module = {
-    terminal = 'alacritty',
+    terminal = 'kitty',
     editor = os.getenv('EDITOR') or 'nvim',
 }
 
