@@ -39,10 +39,10 @@ theme.hotkeys_bg           = theme.color.bg[1]
 theme.hotkeys_border_color = theme.color.highlight[2]
 theme.snap_bg              = theme.color.highlight[3]
 
-theme.useless_gap          = 10
-theme.border_width         = 10
-theme.spacing              = 15
-theme.margin_horizontal    = 20
+theme.useless_gap          = dpi(5)
+theme.border_width         = dpi(5)
+theme.spacing              = dpi(10)
+theme.margin_horizontal    = dpi(12)
 
 
 theme.menu_submenu_icon                         = themes_path .. 'default/submenu.png'
