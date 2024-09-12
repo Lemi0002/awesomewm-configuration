@@ -43,6 +43,7 @@ theme.useless_gap          = dpi(5)
 theme.border_width         = dpi(5)
 theme.spacing              = dpi(10)
 theme.margin_horizontal    = dpi(12)
+theme.corner_radius        = dpi(7)
 
 
 theme.menu_submenu_icon                         = themes_path .. 'default/submenu.png'

@@ -28,6 +28,12 @@ local layouts = {
     -- awful.layout.suit.corner.se,
 }
 
+local shape = function()
+    return function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, beautiful.corner_radius)
+    end
+end
+
 local widgets = {
     battery = widgets_battery.new(),
     brightness = widgets_brightness.new(),
@@ -36,39 +42,39 @@ local widgets = {
     calendar = awful.widget.calendar_popup.year({
         week_numbers = true,
         style_year = {
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
             border_color = beautiful.color.highlight[2],
         },
         style_yearheader = {
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
         },
         style_month = {
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
         },
         style_header = {
             bg_color = beautiful.color.bg[3],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
             padding = 5,
         },
         style_weekday = {
             fg_color = beautiful.color.fg[1],
             bg_color = beautiful.color.bg[2],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
             padding = 5,
         },
         style_weeknumber = {
             fg_color = beautiful.color.fg[1],
             bg_color = beautiful.color.bg[2],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
             padding = 5,
         },
         style_normal = {
             fg_color = beautiful.color.fg[1],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
         },
         style_focus = {
             bg_color = beautiful.color.highlight[1],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
             padding = 5,
         },
     }),
@@ -135,7 +141,7 @@ awful.screen.connect_for_each_screen(function(screen)
             bg_focus = beautiful.color.highlight[1],
             bg_urgent = beautiful.color.highlight[3],
             bg_volatile = beautiful.color.highlight[3],
-            shape = gears.shape.rounded_rect,
+            shape = shape(),
         },
         layout          = {
             spacing = beautiful.spacing,
@@ -187,7 +193,7 @@ awful.screen.connect_for_each_screen(function(screen)
                     widget = wibox.container.margin,
                 },
                 bg = beautiful.color.bg[3],
-                shape = gears.shape.rounded_rect,
+                shape = shape(),
                 widget = wibox.container.background,
             },
             {
@@ -200,7 +206,7 @@ awful.screen.connect_for_each_screen(function(screen)
                     widget = wibox.container.margin,
                 },
                 bg = beautiful.color.bg[3],
-                shape = gears.shape.rounded_rect,
+                shape = shape(),
                 widget = wibox.container.background,
             },
             {
@@ -213,7 +219,7 @@ awful.screen.connect_for_each_screen(function(screen)
                     widget = wibox.container.margin,
                 },
                 bg = beautiful.color.bg[3],
-                shape = gears.shape.rounded_rect,
+                shape = shape(),
                 widget = wibox.container.background,
             },
             {
@@ -226,7 +232,7 @@ awful.screen.connect_for_each_screen(function(screen)
                     widget = wibox.container.margin,
                 },
                 bg = beautiful.color.bg[3],
-                shape = gears.shape.rounded_rect,
+                shape = shape(),
                 buttons = buttons.calendar,
                 widget = wibox.container.background,
             },
