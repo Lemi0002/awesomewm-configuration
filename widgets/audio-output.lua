@@ -1,15 +1,16 @@
-local awful = require('awful')
 local gears = require('gears')
 local wibox = require('wibox')
-local utilities = require('utilities')
+local audio_utilities = require('widgets.audio-utilities')
 
-local volume_module = {}
+local audio_output_module = {}
 
 local DEFAULTS = {
-    device = '@DEFAULT_SINK@',
+    direction = audio_utilities.direction.OUTPUT,
+    device = audio_utilities.device.DEFAULT_OUTPUT,
     timeout = 5,
     volume = {
         step = 5,
+        min = 0,
         max = 100,
     },
     text = {
@@ -27,65 +28,28 @@ local DEFAULTS = {
     },
 }
 
-local get_mute = function(device)
-    local stdout = utilities.pipe_process('pactl get-sink-mute ' .. device) or ''
-
-    if string.find(stdout, 'yes') then
-        return true
-    else
-        return false
-    end
+audio_output_module.toggle_mute = function(self)
+    audio_utilities.toggle_mute(self.direction, self.device)
+    audio_output_module.update(self)
 end
 
-local get_volume = function(device)
-    local stdout = utilities.pipe_process('pactl get-sink-volume ' .. device) or ''
-    local volume_sum = 0
-    local volume_count = 0
-
-    for volume_string in string.gmatch(stdout, '(%d?%d?%d)%%') do
-        local volume = tonumber(volume_string)
-
-        if volume ~= nil then
-            volume_sum = volume_sum + volume
-            volume_count = volume_count + 1
-        end
-    end
-
-    if volume_count == 0 then
-        return 0
-    end
-
-    return math.floor(volume_sum / volume_count)
+audio_output_module.decrease_volume = function(self)
+    audio_utilities.decrease_volume(self.direction, self.device, self.volume.step, self.volume.min)
+    audio_output_module.update(self)
 end
 
-volume_module.toggle_mute = function(self)
-    awful.spawn('pactl set-sink-mute ' .. self.device .. ' toggle', false)
-    volume_module.update(self)
+audio_output_module.increase_volume = function(self)
+    audio_utilities.increase_volume(self.direction, self.device, self.volume.step, self.volume.max)
+    audio_output_module.update(self)
 end
 
-volume_module.decrease_volume = function(self)
-    awful.spawn('pactl set-sink-volume ' .. self.device .. ' -' .. self.volume.step .. '%', false)
-    volume_module.update(self)
-end
-
-volume_module.increase_volume = function(self)
-    local volume_level = get_volume(self.device)
-
-    if volume_level + self.volume.step > self.volume.max then
-        awful.spawn('pactl set-sink-volume ' .. self.device .. ' ' .. self.volume.max .. '%', false)
-    else
-        awful.spawn('pactl set-sink-volume ' .. self.device .. ' +' .. self.volume.step .. '%', false)
-    end
-
-    volume_module.update(self)
-end
-
-volume_module.new = function(arguments)
+audio_output_module.new = function(arguments)
     if arguments == nil then
         arguments = {}
     end
 
     local self = {}
+    self.direction = DEFAULTS.direction
     self.device = arguments.device or DEFAULTS.device
     self.timeout = arguments.timeout or DEFAULTS.timeout
 
@@ -99,6 +63,7 @@ volume_module.new = function(arguments)
 
     self.volume = {
         step = arguments.volume.step or DEFAULTS.volume.step,
+        min = arguments.volume.min or DEFAULTS.volume.min,
         max = arguments.volume.max or DEFAULTS.volume.max,
     }
 
@@ -126,15 +91,15 @@ volume_module.new = function(arguments)
     }
     self.widget = wibox.widget.textbox()
     self.timer = gears.timer({ timeout = self.timeout })
-    self.timer:connect_signal('timeout', function() volume_module.update(self) end)
+    self.timer:connect_signal('timeout', function() audio_output_module.update(self) end)
     self.timer:start()
-    volume_module.update(self)
+    audio_output_module.update(self)
     return self
 end
 
-volume_module.update = function(self)
-    local volume = get_volume(self.device)
-    local mute = get_mute(self.device)
+audio_output_module.update = function(self)
+    local volume = audio_utilities.get_volume(self.direction, self.device)
+    local mute = audio_utilities.get_mute(self.direction, self.device)
     local indicator = ''
 
     if mute then
@@ -157,4 +122,4 @@ volume_module.update = function(self)
         self.text.trailing
 end
 
-return volume_module
+return audio_output_module

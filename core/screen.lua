@@ -6,7 +6,8 @@ local core_keymaps = require('core.keymaps')
 local core_wallpaper = require('core.wallpaper')
 local widgets_battery = require('widgets.battery')
 local widgets_brightness = require('widgets.brightness')
-local widgets_volume = require('widgets.volume')
+local widgets_audio_input = require('widgets.audio-input')
+local widgets_audio_output = require('widgets.audio-output')
 
 local wallpaper = core_wallpaper.new()
 local layouts = {
@@ -37,7 +38,8 @@ end
 local widgets = {
     battery = widgets_battery.new(),
     brightness = widgets_brightness.new(),
-    volume = widgets_volume.new({ volume = { step = 2 } }),
+    audio_input = widgets_audio_input.new(),
+    audio_output = widgets_audio_output.new({ volume = { step = 2 } }),
     textclock = awful.widget.textclock('\u{f00ed} %a %Y-%m-%d  \u{f0954} %R'),
     calendar = awful.widget.calendar_popup.year({
         week_numbers = true,
@@ -103,12 +105,26 @@ local buttons = {
 }
 
 core_keymaps.global.append_keys(
-    awful.key({}, 'XF86AudioLowerVolume', function() widgets_volume.decrease_volume(widgets.volume) end,
-        { description = 'decrease volume', group = 'general' }),
-    awful.key({}, 'XF86AudioRaiseVolume', function() widgets_volume.increase_volume(widgets.volume) end,
-        { description = 'increase volume', group = 'general' }),
-    awful.key({}, 'XF86AudioMute', function() widgets_volume.toggle_mute(widgets.volume) end,
-        { description = 'mute volume', group = 'general' }),
+    -- Audio input
+    awful.key({ core_keymaps.modkey }, 'XF86AudioLowerVolume',
+        function() widgets_audio_input.decrease_volume(widgets.audio_input) end,
+        { description = 'decrease input volume', group = 'general' }),
+    awful.key({ core_keymaps.modkey }, 'XF86AudioRaiseVolume',
+        function() widgets_audio_input.increase_volume(widgets.audio_input) end,
+        { description = 'increase input volume', group = 'general' }),
+    awful.key({ core_keymaps.modkey }, 'XF86AudioMute',
+        function() widgets_audio_input.toggle_mute(widgets.audio_input) end,
+        { description = 'mute input volume', group = 'general' }),
+
+    -- Audio output
+    awful.key({}, 'XF86AudioLowerVolume', function() widgets_audio_output.decrease_volume(widgets.audio_output) end,
+        { description = 'decrease output volume', group = 'general' }),
+    awful.key({}, 'XF86AudioRaiseVolume', function() widgets_audio_output.increase_volume(widgets.audio_output) end,
+        { description = 'increase output volume', group = 'general' }),
+    awful.key({}, 'XF86AudioMute', function() widgets_audio_output.toggle_mute(widgets.audio_output) end,
+        { description = 'mute output volume', group = 'general' }),
+
+    -- Brightness
     awful.key({}, 'XF86MonBrightnessUp', function() widgets_brightness.increase_brightness(widgets.brightness) end,
         { description = 'increase brightness', group = 'general' }),
     awful.key({}, 'XF86MonBrightnessDown', function() widgets_brightness.decrease_brightness(widgets.brightness) end,
@@ -186,7 +202,20 @@ awful.screen.connect_for_each_screen(function(screen)
             {
                 {
                     {
-                        widget = widgets.volume.widget,
+                        widget = widgets.audio_input.widget,
+                    },
+                    left   = beautiful.margin_horizontal,
+                    right  = beautiful.margin_horizontal,
+                    widget = wibox.container.margin,
+                },
+                bg = beautiful.color.bg[3],
+                shape = shape(),
+                widget = wibox.container.background,
+            },
+            {
+                {
+                    {
+                        widget = widgets.audio_output.widget,
                     },
                     left   = beautiful.margin_horizontal,
                     right  = beautiful.margin_horizontal,
