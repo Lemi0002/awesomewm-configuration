@@ -6,6 +6,7 @@ local wallpaper_module = {}
 
 local DEFAULTS = {
     configuration = awful.util.get_configuration_dir() .. 'wallpapers/configuration.txt',
+    wallpaper = awful.util.get_configuration_dir() .. 'wallpapers/mountain-road.jpg',
     maximized = true,
 }
 
@@ -22,10 +23,10 @@ wallpaper_module.new = function(arguments)
 end
 
 wallpaper_module.set_wallpaper = function(self, screen)
-    local wallpaper = utilities.read_line(self.configuration)
+    local wallpaper = utilities.read_line(self.configuration) or ''
 
-    if not wallpaper then
-        return
+    if not gears.filesystem.file_readable(wallpaper) then
+        wallpaper = DEFAULTS.wallpaper
     end
 
     gears.wallpaper.maximized(wallpaper, screen, self.maximized)
