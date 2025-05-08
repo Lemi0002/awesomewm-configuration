@@ -55,7 +55,7 @@ keymaps_module.global.keys = gears.table.join(
     -- General
     awful.key({}, 'XF86AudioPlay', function() awful.util.spawn('playerctl play-pause', false) end,
         { description = 'play media', group = 'general' }),
-    awful.key({}, 'XF86AudioPause', function() awful.util.spawn('playerctl pause', false) end,
+    awful.key({}, 'XF86AudioPause', function() awful.util.spawn('playerctl pause-pause', false) end,
         { description = 'pause media', group = 'general' }),
     awful.key({}, 'XF86AudioPrev', function() awful.util.spawn('playerctl previous', false) end,
         { description = 'previous media', group = 'general' }),
